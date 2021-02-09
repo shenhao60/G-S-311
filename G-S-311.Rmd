@@ -1,0 +1,53 @@
+---
+title: "G&S 311"
+author: "Hao Shen"
+date: "2021/2/9"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+## Reach to the conclusion
+
+```{r}
+n=100
+m=c(60,70,80,90)
+p=seq(0.4,1,0.01)
+for (i in m) {
+  if (i == m[1]) {
+    P=data.frame(p,Cured=paste('P',i,sep=''),Power=cumsum(dbinom(i,n,p)))
+  }
+  else {
+    P=rbind(P,data.frame(p,Cured=paste('P',i,sep=''),Power=cumsum(dbinom(i,n,p))))
+  }
+}
+ggplot2::ggplot()+
+  geom_rect(aes(xmin=0.6,xmax=0.8,ymin=0.05,ymax=0.95),alpha=0.5)+
+  geom_line(data=P, mapping=aes(x=p, y=Power, colour=Cured))+
+  labs(title='Power Curves with Different Critical values')
+```
+
+As the plot shows, with a larger cured people m among total size 100, the curve will move to the further right. The p of new drug and old are 0.8 and 0.6 respectively, reflected as the right and left lines of the grey box. The bottom and top lines of the box represent the 5% type 1 error and (1-95%) type 2 error respectively. In this case, also since the curves are steep enough to cross with the bottom and top lines of the box at the same time, we can change curved people m to obtain a range, which in this example is from 69 to 73.
+
+## Replicate and explain Figure 3.7
+
+```{r}
+n=100
+m=c(69,73)
+p=seq(0.4,1,0.01)
+for (i in m) {
+  if (i == m[1]) {
+    P=data.frame(p,Cured=paste('P',i,sep=''),Power=cumsum(dbinom(i,n,p)))
+  }
+  else {
+    P=rbind(P,data.frame(p,Cured=paste('P',i,sep=''),Power=cumsum(dbinom(i,n,p))))
+  }
+}
+ggplot2::ggplot()+
+  geom_rect(aes(xmin=0.6,xmax=0.8,ymin=0.05,ymax=0.95),alpha=0.5)+
+  geom_line(data=P, mapping=aes(x=p, y=Power, colour=Cured))+
+  labs(title='Figure 3.7: The power curve')
+```
+
+The Figure 3.7 is consisted by two parts: a gray box and two curves. The meaning of the box is as the same as above. The orange curve here represents the smallest integer of m=69 that starts to cross with the bottom of the box (the 5% type 1 error), and the blue one indicates the largest integer of m=73 that can still cross with the top of the box (1-95% type 2 error).And between 69 and 73 are suitable to choose.
